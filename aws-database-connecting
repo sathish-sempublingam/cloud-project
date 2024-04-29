@@ -1,0 +1,110 @@
+1.create the vpc with CIDR 
+
+2.create the igw and attch with vpc
+
+3.create the public and private subnet
+
+4.create the public and private route table
+
+5.route the igw with public route table and asscoate the public subnet in public rt
+
+6.create nat gateway and route into private route table asscoate the public subnet in private rt
+
+7.create public and private servers 
+
+8.login to public server and copy the pem file into server
+
+9.from public server login  to private and check the internet connection (nano my-key.pem) sudo chmod 600 my-key.pem
+
+10.start the db installtion in private server 
+*******private server*****
+
+sudo apt update
+
+sudo apt install mysql-server
+
+sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf ----> change the bind address 127.0.0.1  ----> 0.0.0.0 
+
+sudo systemctl restart mysql
+
+sudo mysql ---> open mysql file 
+create database notes_app;
+
+CREATE USER "admin"@"%" IDENTIFIED BY "12345";
+
+GRANT ALL PRIVILEGES ON *.* TO 'admin'@'%' WITH GRANT OPTION;
+
+FLUSH PRIVILEGES;
+
+ctrl+D ---> exit mysql 
+
+*********public-server********
+
+
+git clone https://github.com/ArunMagi/spring-boot-k8s.git
+
+src/main/resources/application.properties ---> to open file
+
+telnet privateIP 3306 ---> check connecting private server
+
+sudo apt update
+sudo apt install maven
+mvn install
+
+mvn clean --> to remove the run appliction 
+sudo apt install openjdk-8-jdk
+
+java -jar easy-notes-1.0.0.jar ----> to application started
+
+nohup java -jar easy-notes-1.0.0.jar & (nohup java -jar *.jar &) ---> to backround run appliction started
+
+tail -f nohup.out -----> to backround run validation 
+
+
+ps -ef | grep  easy-notes-1.0.0.jar ----> check id (5457)
+
+(public server secrity group TCP8080port connect)
+
+
+
+telnet db-ip pory ---> appliction connection validation
+
+
+
+**********AWS DataBase Connecting appliction************
+
+to create on RDS(relational database system)
+aws createdatabase-->standard create --> MySql(engin) --> temblate(free tier) ---> credentials settings username:  admin
+                                                                                                    password:  welcome123   --> vpc(virtual private cloud) - My-vpc 
+data base get the private EndPoint&Port  ----> database entry ip run
+
+
+(public server)	
+         
+sudo apt install mysql-client---> to remote database connect tool
+
+sudo apt install mysql-client ---> to public server install mysql-client 
+mysql -h(remote place) database-1.c146ymiqmypg.ap-south-1.rds.amazonaws.com(EndPoind-ip) -P(port) 3306 -u(user name) admin -p(password) welcome123 
+--> to connect remote location 
+
+allow securitygroup    Mysql/Aurora  ---> database(RDS)
+
+show databases;
+create database notes_app;
+
+src/main/resources/application.properties ---> to open file
+			changes rds end poind:3306
+			user name : admin
+			password  : welcome123
+
+mvn install  
+
+nohup java -jar easy-notes-1.0.0.jar & (nohup java -jar *.jar &) ---> to backround run appliction started
+
+Rds connecting 
+
+
+
+sudo apt install net-tools  
+netstat -tunlp | grep 5442 ---> to validate which port run appliction
+kill 6067 ---> to appliction stop
